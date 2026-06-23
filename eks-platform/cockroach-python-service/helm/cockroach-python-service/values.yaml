@@ -1,0 +1,17 @@
+replicaCount: 2
+
+image:
+  repository: 471112818913.dkr.ecr.us-east-1.amazonaws.com/cockroach-python-service
+  tag: latest
+  pullPolicy: Always
+
+service:
+  type: ClusterIP
+  port: 80
+  targetPort: 8000
+
+persistence:
+  enabled: true
+  storageClass: gp3
+  accessMode: ReadWriteOnce
+  size: 5Gi

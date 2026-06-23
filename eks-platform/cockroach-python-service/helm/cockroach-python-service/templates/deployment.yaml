@@ -1,0 +1,32 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: {{ include "cockroach-python-service.fullname" . }}
+  labels:
+    app: {{ include "cockroach-python-service.name" . }}
+spec:
+  replicas: {{ .Values.replicaCount }}
+  selector:
+    matchLabels:
+      app: {{ include "cockroach-python-service.name" . }}
+  template:
+    metadata:
+      labels:
+        app: {{ include "cockroach-python-service.name" . }}
+    spec:
+      containers:
+        - name: {{ .Chart.Name }}
+          image: "{{ .Values.image.repository }}:{{ .Values.image.tag }}"
+          imagePullPolicy: {{ .Values.image.pullPolicy }}
+
+          ports:
+            - containerPort: {{ .Values.containerPort }}
+
+          volumeMounts:
+            - name: app-storage
+              mountPath: {{ .Values.persistence.mountPath }}
+
+      volumes:
+        - name: app-storage
+          persistentVolumeClaim:
+            claimName: {{ include "cockroach-python-service.fullname" . }}-pvc
