@@ -9,10 +9,9 @@ module "vpc" {
   private_subnet_b = "10.0.12.0/24"
 }
 
-module "nat" {
-  source = "./modules/nat-instance"
+module "nat_gateway" {
+  source = "./modules/nat-gateway"
 
-  vpc_id                 = module.vpc.vpc_id
   public_subnet_id       = module.vpc.public_subnet_ids[0]
   private_route_table_id = module.vpc.private_route_table_id
 }
