@@ -27,7 +27,7 @@ module "iam" {
 module "eks" {
   source = "./modules/eks"
 
-  cluster_name = "platform-lab"
+  cluster_name = "platform-engineer"
 
   vpc_id             = module.vpc.vpc_id
   private_subnet_ids = module.vpc.private_subnet_ids
