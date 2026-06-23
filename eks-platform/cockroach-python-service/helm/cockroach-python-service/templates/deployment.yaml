@@ -1,61 +1,36 @@
 apiVersion: apps/v1
 kind: Deployment
 metadata:
-  name: {{ include "cockroach-python-service.fullname" . }}
-  labels:
-    app: {{ include "cockroach-python-service.name" . }}
+  name: cockroach-python-service
+  namespace: cockroach
 spec:
-  replicas: {{ .Values.replicaCount }}
+  replicas: 1
   selector:
     matchLabels:
-      app: {{ include "cockroach-python-service.name" . }}
+      app: cockroach-python-service
   template:
     metadata:
       labels:
-        app: {{ include "cockroach-python-service.name" . }}
+        app: cockroach-python-service
     spec:
       containers:
-        - name: {{ .Chart.Name }}
-          image: "{{ .Values.image.repository }}:{{ .Values.image.tag }}"
-          imagePullPolicy: {{ .Values.image.pullPolicy }}
+        - name: python-app
+          image: your-image:latest
 
           ports:
-            - containerPort: {{ .Values.containerPort }}
+            - containerPort: 8080
 
           env:
             - name: DB_HOST
-              value: "cockroachdb-public"
+              value: "cockroachdb-public.cockroach.svc.cluster.local"
             - name: DB_PORT
               value: "26257"
             - name: DB_NAME
-              value: {{ .Values.db.name | quote }}
+              value: "defaultdb"
             - name: DB_USER
-              value: {{ .Values.db.user | quote }}
+              value: "root"
             - name: DB_PASSWORD
               valueFrom:
                 secretKeyRef:
-                  name: {{ include "cockroach-python-service.fullname" . }}-db-secret
+                  name: cockroach-python-service-db-secret
                   key: password
-
-          volumeMounts:
-            - name: app-storage
-              mountPath: {{ .Values.persistence.mountPath }}
-
-          readinessProbe:
-            httpGet:
-              path: /health
-              port: {{ .Values.containerPort }}
-            initialDelaySeconds: 10
-            periodSeconds: 5
-
-          livenessProbe:
-            httpGet:
-              path: /health
-              port: {{ .Values.containerPort }}
-            initialDelaySeconds: 20
-            periodSeconds: 10
-
-      volumes:
-        - name: app-storage
-          persistentVolumeClaim:
-            claimName: {{ include "cockroach-python-service.fullname" . }}-pvc
