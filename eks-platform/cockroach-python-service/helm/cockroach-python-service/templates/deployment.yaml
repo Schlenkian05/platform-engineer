@@ -1,36 +1,25 @@
 apiVersion: apps/v1
 kind: Deployment
 metadata:
-  name: cockroach-python-service
-  namespace: cockroach
+  name: {{ include "cockroach-python-service.fullname" . }}
 spec:
-  replicas: 1
+  replicas: {{ .Values.replicaCount }}
   selector:
     matchLabels:
-      app: cockroach-python-service
+      app: {{ include "cockroach-python-service.name" . }}
   template:
     metadata:
       labels:
-        app: cockroach-python-service
+        app: {{ include "cockroach-python-service.name" . }}
     spec:
       containers:
-        - name: python-app
-          image: your-image:latest
-
+        - name: app
+          image: "{{ .Values.image.repository }}:{{ .Values.image.tag }}"
           ports:
-            - containerPort: 8080
+            - containerPort: {{ .Values.containerPort }}
 
           env:
             - name: DB_HOST
-              value: "cockroachdb-public.cockroach.svc.cluster.local"
+              value: {{ .Values.db.host | quote }}
             - name: DB_PORT
-              value: "26257"
-            - name: DB_NAME
-              value: "defaultdb"
-            - name: DB_USER
-              value: "root"
-            - name: DB_PASSWORD
-              valueFrom:
-                secretKeyRef:
-                  name: cockroach-python-service-db-secret
-                  key: password
+              value: {{ .Values.db.port | quote }}
