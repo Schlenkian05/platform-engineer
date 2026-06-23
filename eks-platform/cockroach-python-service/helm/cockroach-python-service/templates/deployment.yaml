@@ -22,9 +22,38 @@ spec:
           ports:
             - containerPort: {{ .Values.containerPort }}
 
+          env:
+            - name: DB_HOST
+              value: "cockroachdb-public"
+            - name: DB_PORT
+              value: "26257"
+            - name: DB_NAME
+              value: {{ .Values.db.name | quote }}
+            - name: DB_USER
+              value: {{ .Values.db.user | quote }}
+            - name: DB_PASSWORD
+              valueFrom:
+                secretKeyRef:
+                  name: {{ include "cockroach-python-service.fullname" . }}-db-secret
+                  key: password
+
           volumeMounts:
             - name: app-storage
               mountPath: {{ .Values.persistence.mountPath }}
+
+          readinessProbe:
+            httpGet:
+              path: /health
+              port: {{ .Values.containerPort }}
+            initialDelaySeconds: 10
+            periodSeconds: 5
+
+          livenessProbe:
+            httpGet:
+              path: /health
+              port: {{ .Values.containerPort }}
+            initialDelaySeconds: 20
+            periodSeconds: 10
 
       volumes:
         - name: app-storage
