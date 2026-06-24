@@ -19,14 +19,14 @@ module "nat_gateway" {
 module "iam" {
   source = "./modules/iam"
 
-  cluster_role_name = "platform-eks-cluster-role"
-  node_role_name    = "platform-eks-node-role"
+  cluster_role_name = "cockroach-eks-cluster-role"
+  node_role_name    = "cockroach-eks-node-role"
 }
 
 module "eks" {
   source = "./modules/eks"
 
-  cluster_name = "platform-engineer"
+  cluster_name = "platform-cockroach"
 
   vpc_id             = module.vpc.vpc_id
   private_subnet_ids = module.vpc.private_subnet_ids
