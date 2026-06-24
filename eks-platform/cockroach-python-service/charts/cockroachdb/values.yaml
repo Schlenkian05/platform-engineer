@@ -1,0 +1,26 @@
+replicaCount: 3
+
+image:
+  repository: cockroachdb/cockroach
+  tag: v25.2.1
+  pullPolicy: IfNotPresent
+
+storageClass:
+  create: true
+  name: gp3
+
+storage:
+  size: 5Gi
+  storageClass: gp3
+
+service:
+  sqlPort: 26257
+  httpPort: 8080
+
+resources:
+  requests:
+    cpu: "250m"
+    memory: "512Mi"
+  limits:
+    cpu: "1000m"
+    memory: "1Gi"

@@ -1,0 +1,68 @@
+apiVersion: apps/v1
+kind: StatefulSet
+metadata:
+  name: cockroachdb
+spec:
+  serviceName: cockroachdb
+  replicas: {{ .Values.replicaCount }}
+
+  selector:
+    matchLabels:
+      app: cockroachdb
+
+  template:
+    metadata:
+      labels:
+        app: cockroachdb
+
+    spec:
+      containers:
+        - name: cockroachdb
+          image: "{{ .Values.image.repository }}:{{ .Values.image.tag }}"
+          imagePullPolicy: {{ .Values.image.pullPolicy }}
+
+          env:
+            - name: HOSTNAME
+              valueFrom:
+                fieldRef:
+                  fieldPath: metadata.name
+
+          command:
+            - /cockroach/cockroach
+            - start
+            - --insecure
+            - --advertise-addr=$(HOSTNAME).cockroachdb
+            - --join=cockroachdb-0.cockroachdb,cockroachdb-1.cockroachdb,cockroachdb-2.cockroachdb
+            - --http-addr=0.0.0.0:8080
+
+          ports:
+            - name: sql
+              containerPort: 26257
+
+            - name: http
+              containerPort: 8080
+
+          resources:
+            requests:
+              cpu: {{ .Values.resources.requests.cpu | quote }}
+              memory: {{ .Values.resources.requests.memory | quote }}
+            limits:
+              cpu: {{ .Values.resources.limits.cpu | quote }}
+              memory: {{ .Values.resources.limits.memory | quote }}
+
+          volumeMounts:
+            - name: datadir
+              mountPath: /cockroach/cockroach-data
+
+  volumeClaimTemplates:
+    - metadata:
+        name: datadir
+      spec:
+        accessModes:
+          - ReadWriteOnce
+
+        storageClassName: {{ .Values.storage.storageClass }}
+
+        resources:
+          requests:
+            storage: {{ .Values.storage.size }}

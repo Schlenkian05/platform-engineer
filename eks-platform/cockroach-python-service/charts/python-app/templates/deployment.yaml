@@ -1,25 +1,33 @@
 apiVersion: apps/v1
 kind: Deployment
 metadata:
-  name: {{ include "cockroach-python-service.fullname" . }}
+  name: python-app
+
 spec:
   replicas: {{ .Values.replicaCount }}
+
   selector:
     matchLabels:
-      app: {{ include "cockroach-python-service.name" . }}
+      app: python-app
+
   template:
     metadata:
       labels:
-        app: {{ include "cockroach-python-service.name" . }}
+        app: python-app
+
     spec:
       containers:
-        - name: app
+        - name: python-app
+
           image: "{{ .Values.image.repository }}:{{ .Values.image.tag }}"
+          imagePullPolicy: {{ .Values.image.pullPolicy }}
+
           ports:
             - containerPort: {{ .Values.containerPort }}
 
           env:
             - name: DB_HOST
-              value: {{ .Values.db.host | quote }}
+              value: "{{ .Values.database.host }}"
+
             - name: DB_PORT
-              value: {{ .Values.db.port | quote }}
+              value: "{{ .Values.database.port }}"
