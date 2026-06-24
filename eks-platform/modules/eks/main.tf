@@ -6,6 +6,7 @@ module "eks" {
   kubernetes_version = var.kubernetes_version
 
   enable_irsa = true
+  enable_cluster_creator_admin_permissions = true
 
   endpoint_public_access  = true
   endpoint_private_access = true
@@ -17,7 +18,7 @@ module "eks" {
   iam_role_arn    = var.cluster_role_arn
 
 
- addons = {
+ cluster_addons = {
 
     coredns = {}
 
