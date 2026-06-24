@@ -7,5 +7,5 @@ variable "region" {
 variable "cluster_name" {
   description = "EKS Cluster Name"
   type        = string
-  default     = "platform-lab"
+  default     = "platform-cockroach"
 }
