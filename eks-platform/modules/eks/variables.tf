@@ -26,19 +26,19 @@ variable "node_role_arn" {
 variable "kubernetes_version" {
   description = "EKS Kubernetes Version"
   type        = string
-  default     = "1.32"
+  default     = "1.35"
 }
 
 variable "instance_types" {
   description = "Node Group Instance Types"
   type        = list(string)
-  default     = ["t3.large"]
+  default     = ["t3.medium"]
 }
 
 variable "desired_size" {
   description = "Desired number of worker nodes"
   type        = number
-  default     = 2
+  default     = 1
 }
 
 variable "min_size" {
