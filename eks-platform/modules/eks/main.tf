@@ -16,6 +16,20 @@ module "eks" {
   create_iam_role = false
   iam_role_arn    = var.cluster_role_arn
 
+
+ cluster_addons = {
+
+    coredns = {}
+
+    kube-proxy = {}
+
+    vpc-cni = {}
+
+    aws-ebs-csi-driver = {
+      service_account_role_arn = aws_iam_role.ebs_csi.arn
+    }
+  }
+
   eks_managed_node_groups = {
 
     general = {
