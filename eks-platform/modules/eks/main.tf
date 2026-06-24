@@ -18,7 +18,7 @@ module "eks" {
   iam_role_arn    = var.cluster_role_arn
 
 
- cluster_addons = {
+ addons = {
 
     coredns = {}
 
