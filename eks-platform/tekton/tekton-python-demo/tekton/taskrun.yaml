@@ -1,0 +1,19 @@
+apiVersion: tekton.dev/v1
+kind: TaskRun
+metadata:
+  name: git-clone-run
+spec:
+  taskRef:
+    name: git-clone
+
+  params:
+    - name: repo-url
+      value: "https://github.com/karthick/tekton-python-demo.git"
+
+    - name: revision
+      value: "main"
+
+  workspaces:
+    - name: output
+      persistentVolumeClaim:
+        claimName: tekton-pvc
