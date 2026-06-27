@@ -13,7 +13,7 @@ spec:
     - name: repo-url
 
       # CHANGE THIS
-      value: https://github.com/YOUR_GITHUB_USERNAME/tekton-python-demo.git
+      value: https://github.com/Schlenkian05/platform-engineer.git
 
     - name: revision
       value: main
