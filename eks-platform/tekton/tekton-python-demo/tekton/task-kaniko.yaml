@@ -31,8 +31,8 @@ spec:
         echo "===== Building Image ====="
 
         /kaniko/executor \
-          --dockerfile=/workspace/source/source/tekton/tekton-python-demo/Dockerfile \
-          --context=/workspace/source/source/tekton/tekton-python-demo \
+          --dockerfile=/workspace/source/source/eks-platform/tekton/tekton-python-demo/Dockerfile \
+          --context=/workspace/source/source/eks-platform/tekton/tekton-python-demo \
           --destination=$(params.IMAGE) \
           --cache=true
 
