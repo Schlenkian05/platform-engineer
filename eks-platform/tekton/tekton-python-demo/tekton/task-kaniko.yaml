@@ -15,41 +15,24 @@ spec:
     - name: docker-config
       secret:
         secretName: docker-config
+        items:
+          - key: .dockerconfigjson
+            path: config.json
 
   steps:
     - name: build
       image: gcr.io/kaniko-project/executor:debug
 
-      script: |
-        #!/busybox/sh
+      workingDir: /workspace/source/source
 
-        echo "==============================="
-        echo "Current Directory"
-        echo "==============================="
-        pwd
+      command:
+        - /kaniko/executor
 
-        echo ""
-        echo "==============================="
-        echo "Workspace Contents"
-        echo "==============================="
-        find /workspace
-
-        echo ""
-        echo "==============================="
-        echo "Looking for Dockerfile"
-        echo "==============================="
-        find /workspace -name Dockerfile
-
-        echo ""
-        echo "==============================="
-        echo "Building Image"
-        echo "==============================="
-
-        /kaniko/executor \
-          --dockerfile=/workspace/source/source/eks-platform/tekton/tekton-python-demo/Dockerfile \
-          --context=/workspace/source/source/eks-platform/tekton/tekton-python-demo \
-          --destination=$(params.IMAGE) \
-          --cache=true
+      args:
+        - --dockerfile=eks-platform/tekton/tekton-python-demo/Dockerfile
+        - --context=eks-platform/tekton/tekton-python-demo
+        - --destination=$(params.IMAGE)
+        - --cache=true
 
       volumeMounts:
         - name: docker-config
