@@ -18,7 +18,7 @@ spec:
 
       image: gcr.io/kaniko-project/executor:latest
 
-      workingDir: /workspace/source/source
+      workingDir: /workspace/source/source/tekton/tekton-python-demo
 
       args:
         - --dockerfile=Dockerfile
