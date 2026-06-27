@@ -6,6 +6,7 @@ spec:
   params:
     - name: repo-url
       type: string
+
     - name: revision
       type: string
       default: main
@@ -16,12 +17,31 @@ spec:
   steps:
     - name: clone
       image: alpine/git:latest
+
       script: |
         #!/bin/sh
         set -e
+
+        echo "=================================="
+        echo "Cleaning old workspace..."
+        echo "=================================="
+
+        rm -rf /workspace/output/source
+
+        echo "=================================="
+        echo "Cloning Repository..."
+        echo "=================================="
 
         git clone $(params.repo-url) \
           --branch $(params.revision) \
           /workspace/output/source
 
-        ls -l /workspace/output/source
+        echo "=================================="
+        echo "Repository cloned successfully"
+        echo "=================================="
+
+        echo "Listing repository..."
+        find /workspace/output/source -maxdepth 5
+
+        echo "Looking for Dockerfile..."
+        find /workspace/output/source -name Dockerfile
