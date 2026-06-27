@@ -1,0 +1,68 @@
+apiVersion: tekton.dev/v1
+kind: Pipeline
+metadata:
+  name: python-ci-pipeline
+
+spec:
+
+  params:
+
+    - name: repo-url
+      type: string
+
+    - name: revision
+      type: string
+      default: main
+
+    - name: image
+      type: string
+
+  workspaces:
+
+    - name: shared-workspace
+
+  tasks:
+
+    - name: clone
+
+      taskRef:
+        name: git-clone
+
+      params:
+        - name: repo-url
+          value: $(params.repo-url)
+
+        - name: revision
+          value: $(params.revision)
+
+      workspaces:
+        - name: output
+          workspace: shared-workspace
+
+    - name: build
+
+      runAfter:
+        - clone
+
+      taskRef:
+        name: kaniko-build
+
+      params:
+        - name: IMAGE
+          value: $(params.image)
+
+      workspaces:
+        - name: source
+          workspace: shared-workspace
+
+    - name: scan
+
+      runAfter:
+        - build
+
+      taskRef:
+        name: trivy-scan
+
+      params:
+        - name: IMAGE
+          value: $(params.image)
