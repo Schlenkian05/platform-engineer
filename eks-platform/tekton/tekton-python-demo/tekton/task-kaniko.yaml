@@ -2,9 +2,7 @@ apiVersion: tekton.dev/v1
 kind: Task
 metadata:
   name: kaniko-build
-
 spec:
-
   params:
     - name: IMAGE
       type: string
@@ -12,25 +10,32 @@ spec:
   workspaces:
     - name: source
 
-  steps:
-
-    - name: build
-
-      image: gcr.io/kaniko-project/executor:latest
-
-      workingDir: /workspace/source/source/tekton/tekton-python-demo
-
-      args:
-        - --dockerfile=Dockerfile
-        - --context=.
-        - --destination=$(params.IMAGE)
-        - --cache=true
-
-      volumeMounts:
-        - name: docker-config
-          mountPath: /kaniko/.docker
-
   volumes:
     - name: docker-config
       secret:
         secretName: docker-config
+
+  steps:
+    - name: build
+      image: gcr.io/kaniko-project/executor:latest
+
+      script: |
+        #!/busybox/sh
+
+        echo "===== Current Directory ====="
+        pwd
+
+        echo "===== Listing Repository ====="
+        ls -R /workspace/source/source
+
+        echo "===== Building Image ====="
+
+        /kaniko/executor \
+          --dockerfile=/workspace/source/source/tekton/tekton-python-demo/Dockerfile \
+          --context=/workspace/source/source/tekton/tekton-python-demo \
+          --destination=$(params.IMAGE) \
+          --cache=true
+
+      volumeMounts:
+        - name: docker-config
+          mountPath: /kaniko/.docker
